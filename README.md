@@ -27,6 +27,10 @@ Open the Thymer command palette, choose **Choose Font**, and use a dedicated fon
 - Persists settings per workspace using `localStorage`.
 - Designed to work with light and dark themes without overriding theme colours.
 
+## Preview
+
+<img width="911" height="1022" alt="image" src="https://github.com/user-attachments/assets/4eb759e1-583f-48ac-9dce-ae08b7749be8" />
+
 ## Installation
 
 Create a **Global Plugin** in Thymer and paste:
@@ -45,8 +49,3 @@ Full installed-font enumeration depends on `window.queryLocalFonts()`, which is 
 If unavailable or denied, the plugin falls back to detecting a practical list of common local fonts.
 
 Google Fonts require network access to Google font endpoints. If metadata loading fails, a curated fallback font list is still available.
-
-## Preview
-
-<img width="911" height="1022" alt="image" src="https://github.com/user-attachments/assets/4eb759e1-583f-48ac-9dce-ae08b7749be8" />
-
