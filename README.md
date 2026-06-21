@@ -7,23 +7,10 @@ Open the Thymer command palette, choose **Choose Font**, and use a dedicated fon
 ## Features
 
 - Adds **Choose Font** to the Thymer command palette.
-- Opens in a **dedicated Thymer panel**, so you can keep a note open beside it and preview changes live.
+- Opens in a dedicated Thymer panel, so you can keep a note open beside it and preview changes live.
 - Searchable font list.
-- **Google Fonts** shown first.
-- Installed/system fonts shown below Google Fonts.
+- Includes most popular Google Fonts & installed/system fonts
 - Google Fonts metadata is loaded from Google when available.
-- Curated fallback list includes popular Google Fonts such as:
-  - IBM Plex Sans
-  - IBM Plex Mono
-  - IBM Plex Serif
-  - Roboto
-  - Open Sans
-  - Lato
-  - Montserrat
-  - Poppins
-  - Inter
-  - Source Sans 3
-  - and more.
 - Installed fonts use the browser Local Font Access API when available.
 - Falls back to detecting common installed fonts if full font enumeration is unavailable.
 - Separate font targets:
@@ -31,9 +18,6 @@ Open the Thymer command palette, choose **Choose Font**, and use a dedicated fon
   - **Interface / UX** — sidebars, menus, buttons, command palette, app chrome.
   - **Both** — apply to both areas.
 - Live preview while selecting fonts.
-- Changes are only saved when you click **Apply**.
-- **Cancel** restores the previous font settings.
-- Closing the chooser panel without applying also restores the previous settings.
 - Font size adjustment controls:
   - `−` decrease size.
   - `+` increase size.
@@ -41,8 +25,7 @@ Open the Thymer command palette, choose **Choose Font**, and use a dedicated fon
 - Font size settings are saved separately for primary text and interface fonts.
 - Reset selected target back to Thymer defaults.
 - Persists settings per workspace using `localStorage`.
-- Font list is contained in a scrollable window so Apply/Cancel stay accessible.
-- Designed to work with light, dark, and custom Thymer themes without overriding theme colours.
+- Designed to work with light and dark themes without overriding theme colours.
 
 ## Installation
 
@@ -52,17 +35,6 @@ Create a **Global Plugin** in Thymer and paste:
 - `plugin.json` into **Configuration**
 
 Then open the command palette and run **Choose Font**.
-
-## Development with the Thymer Plugin SDK
-
-If using the SDK hot-reload workflow:
-
-1. Copy `plugin.js` and `plugin.json` into your Thymer Plugin SDK starter folder.
-2. Run:
-
-```bash
-npm run dev
-```
 
 3. Enable plugin hot reload in Thymer's plugin developer tools.
 
@@ -74,7 +46,9 @@ If unavailable or denied, the plugin falls back to detecting a practical list of
 
 Google Fonts require network access to Google font endpoints. If metadata loading fails, a curated fallback font list is still available.
 
-## Files
+## Examples
 
-- `plugin.js` — plugin implementation.
-- `plugin.json` — Thymer plugin configuration.
+<img width="561" height="195" alt="image" src="https://github.com/user-attachments/assets/abf99c03-53d6-4a5b-9af6-4ea4f7b71925" />
+
+<img width="911" height="1022" alt="image" src="https://github.com/user-attachments/assets/4eb759e1-583f-48ac-9dce-ae08b7749be8" />
+
