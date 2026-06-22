@@ -29,16 +29,50 @@ class Plugin extends AppPlugin {
 
     _injectBaseCSS() {
         this.ui.injectCSS(`
-            .tfchooser-panel{height:100%;max-height:100vh;box-sizing:border-box;padding:14px;background:Canvas;color:CanvasText;color-scheme:light dark;overflow:hidden;display:flex;flex-direction:column}
-            .tfchooser-modal{max-width:820px;height:100%;max-height:calc(100vh - 96px);display:flex;flex-direction:column;background:Canvas;color:CanvasText;border:1px solid color-mix(in srgb, CanvasText 22%, transparent);border-radius:14px;overflow:hidden;font-family:inherit;color-scheme:light dark}
-            .tfchooser-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid color-mix(in srgb, CanvasText 14%, transparent);gap:12px}
-            .tfchooser-title{font-weight:650;font-size:18px}.tfchooser-close{border:0;background:transparent;color:CanvasText;font-size:24px;cursor:pointer;opacity:.7}.tfchooser-close:hover{opacity:1}
-            .tfchooser-search{box-sizing:border-box;width:calc(100% - 32px);margin:14px 16px 8px;padding:11px 13px;border-radius:10px;border:1px solid color-mix(in srgb, CanvasText 24%, transparent);background:color-mix(in srgb, Canvas 92%, CanvasText 8%);color:CanvasText;font:inherit;outline:none}
-            .tfchooser-actions{display:flex;gap:8px;align-items:center;padding:0 16px 12px;flex-wrap:wrap}.tfchooser-btn{border:1px solid color-mix(in srgb, CanvasText 24%, transparent);border-radius:9px;background:color-mix(in srgb, Canvas 92%, CanvasText 8%);color:CanvasText;padding:7px 10px;cursor:pointer;font:inherit}.tfchooser-btn:hover{background:color-mix(in srgb, Canvas 86%, CanvasText 14%)}.tfchooser-btn[aria-pressed="true"]{background:Highlight;color:HighlightText;border-color:Highlight}
+            .tfchooser-panel{--tfchooser-bg:#f8fafc;--tfchooser-surface:#ffffff;--tfchooser-fg:#0f172a;--tfchooser-muted:#64748b;--tfchooser-accent:#2563eb;--tfchooser-accent-fg:#ffffff;height:100%;max-height:100vh;box-sizing:border-box;padding:14px;background:var(--tfchooser-bg);color:var(--tfchooser-fg);overflow:hidden;display:flex;flex-direction:column}
+            .tfchooser-theme-light{color-scheme:light}.tfchooser-theme-dark{color-scheme:dark;--tfchooser-bg:#0f172a;--tfchooser-surface:#111827;--tfchooser-fg:#e5e7eb;--tfchooser-muted:#9ca3af;--tfchooser-accent:#60a5fa;--tfchooser-accent-fg:#08111f}
+            .tfchooser-modal{max-width:820px;height:100%;max-height:calc(100vh - 96px);display:flex;flex-direction:column;background:var(--tfchooser-surface);color:var(--tfchooser-fg);border:1px solid color-mix(in srgb, var(--tfchooser-fg) 22%, transparent);border-radius:14px;overflow:hidden;font-family:inherit}
+            .tfchooser-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid color-mix(in srgb, var(--tfchooser-fg) 14%, transparent);gap:12px}
+            .tfchooser-title{font-weight:650;font-size:18px}.tfchooser-close{border:0;background:transparent;color:var(--tfchooser-fg);font-size:24px;cursor:pointer;opacity:.7}.tfchooser-close:hover{opacity:1}
+            .tfchooser-search{box-sizing:border-box;width:calc(100% - 32px);margin:14px 16px 8px;padding:11px 13px;border-radius:10px;border:1px solid color-mix(in srgb, var(--tfchooser-fg) 24%, transparent);background:color-mix(in srgb, var(--tfchooser-surface) 92%, var(--tfchooser-fg) 8%);color:var(--tfchooser-fg);font:inherit;outline:none}
+            .tfchooser-actions{display:flex;gap:8px;align-items:center;padding:0 16px 12px;flex-wrap:wrap}.tfchooser-btn{border:1px solid color-mix(in srgb, var(--tfchooser-fg) 24%, transparent);border-radius:9px;background:color-mix(in srgb, var(--tfchooser-surface) 92%, var(--tfchooser-fg) 8%);color:var(--tfchooser-fg);padding:7px 10px;cursor:pointer;font:inherit}.tfchooser-btn:hover{background:color-mix(in srgb, var(--tfchooser-surface) 86%, var(--tfchooser-fg) 14%)}.tfchooser-btn[aria-pressed="true"]{background:var(--tfchooser-accent);color:var(--tfchooser-accent-fg);border-color:var(--tfchooser-accent)}
             .tfchooser-help{font-size:12px;opacity:.72;padding:0 16px 10px}.tfchooser-status{font-size:12px;opacity:.72;padding-left:4px}.tfchooser-size{font-size:12px;opacity:.78;padding:0 4px}.tfchooser-list{overflow-y:auto;overflow-x:hidden;height:45vh;max-height:min(70vh,520px);min-height:140px;flex:0 0 auto;padding:4px 8px 12px}.tfchooser-section{font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.58;padding:12px 10px 6px}
-            .tfchooser-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer}.tfchooser-row:hover,.tfchooser-row[aria-selected="true"]{background:color-mix(in srgb, Canvas 86%, CanvasText 14%)}
-            .tfchooser-name{font-size:16px}.tfchooser-meta{font-size:12px;opacity:.6;white-space:nowrap}.tfchooser-empty{padding:28px;text-align:center;opacity:.68}.tfchooser-footer{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid color-mix(in srgb, CanvasText 14%, transparent);flex:0 0 auto;background:Canvas}
+            .tfchooser-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer}.tfchooser-row:hover,.tfchooser-row[aria-selected="true"]{background:color-mix(in srgb, var(--tfchooser-surface) 86%, var(--tfchooser-fg) 14%)}
+            .tfchooser-name{font-size:16px}.tfchooser-meta{font-size:12px;opacity:.6;white-space:nowrap}.tfchooser-empty{padding:28px;text-align:center;opacity:.68}.tfchooser-footer{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid color-mix(in srgb, var(--tfchooser-fg) 14%, transparent);flex:0 0 auto;background:var(--tfchooser-surface)}
         `);
+    }
+
+    _getThymerThemeAppearance() {
+        try {
+            const current = this.ui && this.ui.getCurrentTheme ? this.ui.getCurrentTheme() : null;
+            if (current) {
+                if (current.appearance === "dark" || current.appearance === "light") return current.appearance;
+                const themes = this.ui && this.ui.getThemes ? this.ui.getThemes() : [];
+                const ids = [current.theme, current.themeId, current.id, current.currentTheme, current.activeTheme].filter(Boolean);
+                for (const id of ids) {
+                    const theme = themes.find(t => t.id === id || t.name === id);
+                    if (theme && (theme.appearance === "dark" || theme.appearance === "light")) return theme.appearance;
+                }
+            }
+        } catch (_) {}
+
+        // Last resort: infer from Thymer's rendered background, not from the OS media setting.
+        try {
+            const rgb = getComputedStyle(document.body).backgroundColor.match(/\d+(?:\.\d+)?/g);
+            if (rgb && rgb.length >= 3) {
+                const [r, g, b] = rgb.map(Number);
+                return ((r * 299 + g * 587 + b * 114) / 1000) < 128 ? "dark" : "light";
+            }
+        } catch (_) {}
+        return "light";
+    }
+
+    _applyChooserTheme(root) {
+        const panel = root && root.querySelector ? root.querySelector(".tfchooser-panel") : null;
+        if (!panel) return;
+        const appearance = this._getThymerThemeAppearance();
+        panel.classList.toggle("tfchooser-theme-dark", appearance === "dark");
+        panel.classList.toggle("tfchooser-theme-light", appearance !== "dark");
     }
 
     _restoreSavedFont() {
@@ -85,8 +119,10 @@ class Plugin extends AppPlugin {
         let draft = this._cloneSaved(original);
         let allFonts = [];
         let finished = false;
+        let themeInterval = null;
         const closedHandler = this.events.on("panel.closed", (event) => {
             if (!event.panel || event.panel.getId() !== panel.getId()) return;
+            if (themeInterval) clearInterval(themeInterval);
             if (!finished) this._writeFontCSS(original);
             this.events.off(closedHandler);
         });
@@ -116,6 +152,9 @@ class Plugin extends AppPlugin {
                     </div>
                 </div>
             </div>`;
+
+        this._applyChooserTheme(root);
+        themeInterval = setInterval(() => this._applyChooserTheme(root), 1000);
 
         const search = root.querySelector(".tfchooser-search");
         const status = root.querySelector(".tfchooser-status");
