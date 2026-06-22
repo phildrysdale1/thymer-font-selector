@@ -357,8 +357,10 @@ class Plugin extends AppPlugin {
         if (!this._styleTag) {
             this._styleTag = document.createElement("style");
             this._styleTag.id = "thymer-font-chooser-style";
-            document.head.appendChild(this._styleTag);
         }
+        // Keep our generated rules at the end of <head> so they win over Thymer/theme styles
+        // when selectors have similar specificity.
+        document.head.appendChild(this._styleTag);
 
         const contentFamily = saved.content && saved.content.family ? this._fontFamilyCSS(saved.content.family) : null;
         const interfaceFamily = saved.interface && saved.interface.family ? this._fontFamilyCSS(saved.interface.family) : null;
@@ -441,10 +443,10 @@ class Plugin extends AppPlugin {
             .line,
             .lineitem,
             .line-item,
+            .listitem-text .line-div,
+            .listitem:not(.listitem-heading) > .line-div,
             .lineitem-content,
-            .line-content,
-            .lineitem-text,
-            .line-text
+            .line-content
         `;
         const interfaceSizeSelectors = `
             button,
@@ -461,6 +463,25 @@ class Plugin extends AppPlugin {
             .command-palette,
             .tfchooser-modal
         `;
+        // Thymer heading line items use their own default sizes on .line-div.heading-hN.
+        // Do not replace those with fixed pixel values. Instead, avoid targeting heading spans
+        // in the broad text-size rule, then scale the text inside each heading by the same
+        // percentage as body text. That preserves Thymer's native h1/h2/h3/h4 proportions.
+        const thymerHeadingSizeSelectors = {
+            h1: `.heading-h1, .listitem-heading .heading-h1, .id--h1, [class~="id--h1"], [class~="h1"], .heading-1, .heading--1, .heading-size-1, [data-heading-size="1"], [data-size="1"][data-type="heading"], [data-size="1"][data-line-type="heading"], [data-level="1"][data-type="heading"]`,
+            h2: `.heading-h2, .listitem-heading .heading-h2, .id--h2, [class~="id--h2"], [class~="h2"], .heading-2, .heading--2, .heading-size-2, [data-heading-size="2"], [data-size="2"][data-type="heading"], [data-size="2"][data-line-type="heading"], [data-level="2"][data-type="heading"]`,
+            h3: `.heading-h3, .listitem-heading .heading-h3, .id--h3, [class~="id--h3"], [class~="h3"], .heading-3, .heading--3, .heading-size-3, [data-heading-size="3"], [data-size="3"][data-type="heading"], [data-size="3"][data-line-type="heading"], [data-level="3"][data-type="heading"]`,
+            h4: `.heading-h4, .listitem-heading .heading-h4, .id--h4, [class~="id--h4"], [class~="h4"], .heading-4, .heading--4, .heading-size-4, [data-heading-size="4"], [data-size="4"][data-type="heading"], [data-size="4"][data-line-type="heading"], [data-level="4"][data-type="heading"]`,
+        };
+        const semanticHeadingSizeSelectors = {
+            h1: `.ProseMirror h1, .editor h1, .editor-content h1, .document h1, .document-content h1, .record-content h1, .page-content h1`,
+            h2: `.ProseMirror h2, .editor h2, .editor-content h2, .document h2, .document-content h2, .record-content h2, .page-content h2`,
+            h3: `.ProseMirror h3, .editor h3, .editor-content h3, .document h3, .document-content h3, .record-content h3, .page-content h3`,
+            h4: `.ProseMirror h4, .editor h4, .editor-content h4, .document h4, .document-content h4, .record-content h4, .page-content h4`,
+        };
+        const withSuffix = (selectors, suffix) => selectors.split(",").map(s => `${s.trim()}${suffix}`).filter(Boolean).join(",\n                    ");
+        const defaultContentSizes = contentSize !== 100 ? this._measureDefaultContentSizes() : null;
+        const scaledPx = (key) => `${(defaultContentSizes[key] * contentSize / 100).toFixed(3)}px`;
         const css = [];
 
         if (contentFamily || contentSize !== 100) {
@@ -484,6 +505,48 @@ class Plugin extends AppPlugin {
                     ${contentSizeSelectors} {
                         font-size: var(--thymer-font-chooser-content-size) !important;
                     }
+
+                    /* Scale from Thymer's measured native editor sizes, rather than guessing fixed sizes. */
+                    listview-editor .listview-items .listitem:not(.listitem-heading) > .line-div,
+                    listview-editor .listview-items .listitem:not(.listitem-heading) > .line-div > .lineitem-text,
+                    .listview-items .listitem:not(.listitem-heading) > .line-div,
+                    .listview-items .listitem:not(.listitem-heading) > .line-div > .lineitem-text { font-size: ${scaledPx("text")} !important; }
+
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h1,
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h1 > .lineitem-text,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h1,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h1 > .lineitem-text,
+                    ${thymerHeadingSizeSelectors.h1},
+                    ${withSuffix(thymerHeadingSizeSelectors.h1, " > .lineitem-text")},
+                    ${semanticHeadingSizeSelectors.h1},
+                    ${withSuffix(semanticHeadingSizeSelectors.h1, " > *")} { font-size: ${scaledPx("h1")} !important; }
+
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h2,
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h2 > .lineitem-text,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h2,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h2 > .lineitem-text,
+                    ${thymerHeadingSizeSelectors.h2},
+                    ${withSuffix(thymerHeadingSizeSelectors.h2, " > .lineitem-text")},
+                    ${semanticHeadingSizeSelectors.h2},
+                    ${withSuffix(semanticHeadingSizeSelectors.h2, " > *")} { font-size: ${scaledPx("h2")} !important; }
+
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h3,
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h3 > .lineitem-text,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h3,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h3 > .lineitem-text,
+                    ${thymerHeadingSizeSelectors.h3},
+                    ${withSuffix(thymerHeadingSizeSelectors.h3, " > .lineitem-text")},
+                    ${semanticHeadingSizeSelectors.h3},
+                    ${withSuffix(semanticHeadingSizeSelectors.h3, " > *")} { font-size: ${scaledPx("h3")} !important; }
+
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h4,
+                    listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h4 > .lineitem-text,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h4,
+                    .listview-items .listitem.listitem-heading > .line-div.heading-h4 > .lineitem-text,
+                    ${thymerHeadingSizeSelectors.h4},
+                    ${withSuffix(thymerHeadingSizeSelectors.h4, " > .lineitem-text")},
+                    ${semanticHeadingSizeSelectors.h4},
+                    ${withSuffix(semanticHeadingSizeSelectors.h4, " > *")} { font-size: ${scaledPx("h4")} !important; }
                 `);
             }
         }
@@ -545,6 +608,72 @@ class Plugin extends AppPlugin {
         }
 
         this._styleTag.textContent = css.join("\n");
+    }
+
+    _measureDefaultContentSizes() {
+        const fallback = { text: 12, h1: 24, h2: 20, h3: 17, h4: 15 };
+        if (typeof document === "undefined" || !document.body) return fallback;
+
+        const previousCSS = this._styleTag ? this._styleTag.textContent : "";
+        const previousDisabled = this._styleTag ? this._styleTag.disabled : false;
+        const px = (el) => {
+            const value = el ? parseFloat(getComputedStyle(el).fontSize) : NaN;
+            return Number.isFinite(value) && value > 0 ? value : null;
+        };
+
+        let fixture = null;
+        try {
+            // Temporarily remove this plugin's size overrides, then build a tiny off-screen copy
+            // of Thymer's editor DOM. This lets the active Thymer theme/app CSS tell us the real
+            // native body and heading sizes instead of guessing.
+            if (this._styleTag) this._styleTag.textContent = "";
+
+            const live = {
+                text: px(document.querySelector("listview-editor .listview-items .listitem:not(.listitem-heading) > .line-div > .lineitem-text, .listview-items .listitem:not(.listitem-heading) > .line-div > .lineitem-text")),
+                h1: px(document.querySelector("listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h1 > .lineitem-text, .listview-items .listitem.listitem-heading > .line-div.heading-h1 > .lineitem-text")),
+                h2: px(document.querySelector("listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h2 > .lineitem-text, .listview-items .listitem.listitem-heading > .line-div.heading-h2 > .lineitem-text")),
+                h3: px(document.querySelector("listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h3 > .lineitem-text, .listview-items .listitem.listitem-heading > .line-div.heading-h3 > .lineitem-text")),
+                h4: px(document.querySelector("listview-editor .listview-items .listitem.listitem-heading > .line-div.heading-h4 > .lineitem-text, .listview-items .listitem.listitem-heading > .line-div.heading-h4 > .lineitem-text")),
+            };
+
+            fixture = document.createElement("listview-editor");
+            fixture.className = "listview-focus thymer-font-chooser-measure";
+            fixture.style.cssText = "position:absolute;left:-10000px;top:-10000px;visibility:hidden;pointer-events:none;contain:layout style;";
+            fixture.innerHTML = `
+                <div class="listview-items">
+                    <div class="listitem listitem-text"><div class="line-div"><span class="lineitem-text">Text</span></div></div>
+                    <div class="listitem listitem-heading"><div class="line-div heading-h1"><span class="lineitem-text">H1</span></div></div>
+                    <div class="listitem listitem-heading"><div class="line-div heading-h2"><span class="lineitem-text">H2</span></div></div>
+                    <div class="listitem listitem-heading"><div class="line-div heading-h3"><span class="lineitem-text">H3</span></div></div>
+                    <div class="listitem listitem-heading"><div class="line-div heading-h4"><span class="lineitem-text">H4</span></div></div>
+                </div>`;
+            document.body.appendChild(fixture);
+
+            const measured = {
+                text: live.text || px(fixture.querySelector(".listitem-text .lineitem-text")) || fallback.text,
+                h1: live.h1 || px(fixture.querySelector(".heading-h1 .lineitem-text")) || px(fixture.querySelector(".heading-h1")) || fallback.h1,
+                h2: live.h2 || px(fixture.querySelector(".heading-h2 .lineitem-text")) || px(fixture.querySelector(".heading-h2")) || fallback.h2,
+                h3: live.h3 || px(fixture.querySelector(".heading-h3 .lineitem-text")) || px(fixture.querySelector(".heading-h3")) || fallback.h3,
+                h4: live.h4 || px(fixture.querySelector(".heading-h4 .lineitem-text")) || px(fixture.querySelector(".heading-h4")) || fallback.h4,
+            };
+
+            // If the off-screen fixture was not styled by Thymer's CSS, all measurements can
+            // collapse to body size. In that case preserve a sane decreasing scale from the
+            // measured body size rather than flattening headings.
+            if (measured.h1 <= measured.text) measured.h1 = measured.text * 1.8;
+            if (measured.h2 <= measured.text) measured.h2 = measured.text * 1.5;
+            if (measured.h3 <= measured.text) measured.h3 = measured.text * 1.25;
+            if (measured.h4 <= measured.text) measured.h4 = measured.text * 1.125;
+            return measured;
+        } catch (_) {
+            return fallback;
+        } finally {
+            if (fixture) fixture.remove();
+            if (this._styleTag) {
+                this._styleTag.textContent = previousCSS;
+                this._styleTag.disabled = previousDisabled;
+            }
+        }
     }
 
     _clearFont(target) {
