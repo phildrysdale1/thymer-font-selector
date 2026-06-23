@@ -3,4 +3,5 @@
   "name": "Font Chooser",
   "icon": "letter-t",
   "description": "Quickly choose an app-wide font from installed fonts or Google Fonts."
+  "version": "0.1.5"
 }
