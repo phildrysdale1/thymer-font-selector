@@ -1,7 +1,24 @@
 {
-  "ver": 1,
-  "name": "Font Chooser",
-  "icon": "letter-t",
-  "description": "Quickly choose an app-wide font from installed fonts or Google Fonts.",
-  "version": "0.1.5"
+{
+	"ver": 1,
+	"name": "Font Chooser",
+	"icon": "letter-t",
+	"off": false,
+	"item_name": "Note",
+	"description": "Quickly choose an app-wide font from installed fonts or Google Fonts.",
+	"show_sidebar_items": true,
+	"show_cmdpal_items": true,
+	"views": [],
+	"fields": [],
+	"page_field_ids": [],
+	"sidebar_record_sort_field_id": "updated_at",
+	"sidebar_record_sort_dir": "desc",
+	"managed": {
+		"fields": false,
+		"views": false,
+		"sidebar": false
+	},
+	"custom": {},
+	"home": false,
+	"version": "0.1.5"
 }
