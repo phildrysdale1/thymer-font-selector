@@ -463,6 +463,21 @@ class Plugin extends AppPlugin {
             [class*="record-title"],
             [class*="page-title"]
         `;
+        const iconSelectors = `
+            line-button,
+            line-button *,
+            line-button::before,
+            line-button::after,
+            .ti,
+            .ti::before,
+            .ti::after,
+            [class^="ti-"],
+            [class^="ti-"]::before,
+            [class^="ti-"]::after,
+            [class*=" ti-"],
+            [class*=" ti-"]::before,
+            [class*=" ti-"]::after
+        `;
         const contentSizeSelectors = `
             [contenteditable="true"],
             textarea,
@@ -519,6 +534,14 @@ class Plugin extends AppPlugin {
             h4: `.ProseMirror h4, .editor h4, .editor-content h4, .document h4, .document-content h4, .record-content h4, .page-content h4`,
         };
         const withSuffix = (selectors, suffix) => selectors.split(",").map(s => `${s.trim()}${suffix}`).filter(Boolean).join(",\n                    ");
+        const headingInlineSelectors = (selectors) => [
+            " > .lineitem-text",
+            " > .lineitem-datetime",
+            " > .lineitem-ref",
+            " > .lineitem-ref .lineitem-ref-title",
+            " > .lineitem-ref line-button",
+            " > line-button",
+        ].map(suffix => withSuffix(selectors, suffix)).join(",\n                    ");
         const defaultContentSizes = contentSize !== 100 ? this._measureDefaultContentSizes() : null;
         const scaledPx = (key) => `${(defaultContentSizes[key] * contentSize / 100).toFixed(3)}px`;
         const css = [];
@@ -556,7 +579,7 @@ class Plugin extends AppPlugin {
                     .listview-items .listitem.listitem-heading > .line-div.heading-h1,
                     .listview-items .listitem.listitem-heading > .line-div.heading-h1 > .lineitem-text,
                     ${thymerHeadingSizeSelectors.h1},
-                    ${withSuffix(thymerHeadingSizeSelectors.h1, " > .lineitem-text")},
+                    ${headingInlineSelectors(thymerHeadingSizeSelectors.h1)},
                     ${semanticHeadingSizeSelectors.h1},
                     ${withSuffix(semanticHeadingSizeSelectors.h1, " > *")} { font-size: ${scaledPx("h1")} !important; }
 
@@ -565,7 +588,7 @@ class Plugin extends AppPlugin {
                     .listview-items .listitem.listitem-heading > .line-div.heading-h2,
                     .listview-items .listitem.listitem-heading > .line-div.heading-h2 > .lineitem-text,
                     ${thymerHeadingSizeSelectors.h2},
-                    ${withSuffix(thymerHeadingSizeSelectors.h2, " > .lineitem-text")},
+                    ${headingInlineSelectors(thymerHeadingSizeSelectors.h2)},
                     ${semanticHeadingSizeSelectors.h2},
                     ${withSuffix(semanticHeadingSizeSelectors.h2, " > *")} { font-size: ${scaledPx("h2")} !important; }
 
@@ -574,7 +597,7 @@ class Plugin extends AppPlugin {
                     .listview-items .listitem.listitem-heading > .line-div.heading-h3,
                     .listview-items .listitem.listitem-heading > .line-div.heading-h3 > .lineitem-text,
                     ${thymerHeadingSizeSelectors.h3},
-                    ${withSuffix(thymerHeadingSizeSelectors.h3, " > .lineitem-text")},
+                    ${headingInlineSelectors(thymerHeadingSizeSelectors.h3)},
                     ${semanticHeadingSizeSelectors.h3},
                     ${withSuffix(semanticHeadingSizeSelectors.h3, " > *")} { font-size: ${scaledPx("h3")} !important; }
 
@@ -583,7 +606,7 @@ class Plugin extends AppPlugin {
                     .listview-items .listitem.listitem-heading > .line-div.heading-h4,
                     .listview-items .listitem.listitem-heading > .line-div.heading-h4 > .lineitem-text,
                     ${thymerHeadingSizeSelectors.h4},
-                    ${withSuffix(thymerHeadingSizeSelectors.h4, " > .lineitem-text")},
+                    ${headingInlineSelectors(thymerHeadingSizeSelectors.h4)},
                     ${semanticHeadingSizeSelectors.h4},
                     ${withSuffix(semanticHeadingSizeSelectors.h4, " > *")} { font-size: ${scaledPx("h4")} !important; }
                 `);
@@ -645,6 +668,21 @@ class Plugin extends AppPlugin {
                 }
             `);
         }
+
+        // Thymer uses Tabler icon classes inline inside editor text (for example
+        // <line-button class="... ti ti-arrow-up-right">). Keep those on the icon font
+        // even when broad content selectors apply a custom text font.
+        css.push(`
+            ${iconSelectors} {
+                font-family: "tabler-icons" !important;
+            }
+            line-button.ti,
+            line-button[class^="ti-"],
+            line-button[class*=" ti-"] {
+                font-size: inherit !important;
+                line-height: inherit !important;
+            }
+        `);
 
         this._styleTag.textContent = css.join("\n");
     }
